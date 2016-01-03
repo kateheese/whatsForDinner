@@ -5,3 +5,25 @@ body {
 a {
   color: #00B7FF;
 }
+
+.ingredient-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.kitchen {
+  padding: 40px;
+}
+
+.navbar {
+  border-radius: 0;
+}
+
+.ingredient {
+  padding: 8px 10px;
+  color: white;
+  background-color: #94A4A5;
+  display: inline-block;
+  margin: 5px;
+  border-radius: 15px;
+}

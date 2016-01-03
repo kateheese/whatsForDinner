@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-md-4 well kitchen">
+    <h3>My Kitchen</h3>
+    <h4>Suggestions</h4>
+    <div class="ingredient-container">
+      <div class="ingredient" ng-repeat="item in suggestions">
+        {{item}}
+        <span class="glyphicon glyphicon-ok" aria-hidden="true" ng-click="addSuggestion()"></span>
+      </div>
+    </div>
+    <form ng-submit="addIngredient()">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="add ingredient" ng-model="ingredient">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button">Add</button>
+        </span>
+      </div>
+    </form>
+    <div class="ingredient-container">
+      <div class="ingredient" ng-repeat="item in kitchen">
+        {{item}}
+        <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeIngredient()"></span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8 recipes">
+    <div class="container">
+      <h3>Recipes</h3>
+    </div>
+  </div>
+</div>
