@@ -1,4 +1,4 @@
-app.controller('KitchenController', ['$scope','$http', function($scope, $http) {
+app.controller('KitchenController', ['$scope','$http', '$window', function($scope, $http, $window) {
   $scope.kitchen = [];
   $scope.recipes;
   $scope.suggestions = [
@@ -46,5 +46,11 @@ app.controller('KitchenController', ['$scope','$http', function($scope, $http) {
           return a.missedIngredientCount - b.missedIngredientCount;
       })
     });
+  }
+
+  $scope.goToRecipe = function() {
+    $http.get('/recipe/' + this.recipe.id).then(function(result) {
+      $window.open(result.data.body.sourceUrl, '_blank');
+    })
   }
 }])

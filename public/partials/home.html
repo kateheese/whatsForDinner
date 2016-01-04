@@ -30,7 +30,7 @@
       <h1>Recipes</h1>
       <button type="button" class="btn btn-success find-recipes" ng-click="findRecipes()">Find Recipes</button>
       <div class="recipe-container">
-        <div class="show-recipe well text-center" ng-repeat="recipe in recipes">
+        <div class="show-recipe well text-center" ng-repeat="recipe in recipes" ng-click="goToRecipe()">
           <h4>{{recipe.title}}</h4>
           <p>{{recipe.usedIngredientCount}} out of {{recipe.usedIngredientCount + recipe.missedIngredientCount}} ingredients</p>
           <img class="recipe-image" src="{{recipe.image}}">

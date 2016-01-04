@@ -54,6 +54,10 @@ a {
   margin: 20px;
 }
 
+.show-recipe:hover {
+  cursor: pointer;
+}
+
 .select:hover {
   cursor: pointer;
 }
