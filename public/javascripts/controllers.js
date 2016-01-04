@@ -1,5 +1,6 @@
 app.controller('KitchenController', ['$scope','$http', function($scope, $http) {
   $scope.kitchen = [];
+  $scope.recipes;
   $scope.suggestions = [
     'salt',
     'pepper',
@@ -13,7 +14,11 @@ app.controller('KitchenController', ['$scope','$http', function($scope, $http) {
     'sugar',
     'flour',
     'vanilla',
-    'corn starch'
+    'corn starch',
+    'peanut butter',
+    'jelly',
+    'ketchup',
+    'bread'
   ];
 
   $scope.addSuggestion = function() {
@@ -30,5 +35,16 @@ app.controller('KitchenController', ['$scope','$http', function($scope, $http) {
   $scope.removeIngredient = function() {
     var index = $scope.kitchen.indexOf(this.item);
     $scope.kitchen.splice(index, 1);
+  }
+
+  $scope.findRecipes = function() {
+    var ingredients = $scope.kitchen.map(function(elem) {
+      return elem.split(' ').join('+');
+    }).join('%2C');
+    $http.get('/recipes/' + ingredients).then(function(result){
+      $scope.recipes = result.data.body.sort(function(a,b) {
+          return a.missedIngredientCount - b.missedIngredientCount;
+      })
+    });
   }
 }])

@@ -1,11 +1,13 @@
-<div class="row">
-  <div class="col-md-4 well kitchen">
-    <h3>My Kitchen</h3>
+<div class="row home">
+  <div class="col-md-4 kitchen">
+    <div class="page-header">
+      <h1>My Kitchen</h1>
+    </div>
     <h4>Suggestions</h4>
     <div class="ingredient-container">
-      <div class="ingredient" ng-repeat="item in suggestions">
+      <div class="ingredient select" ng-repeat="item in suggestions" ng-click="addSuggestion()">
         {{item}}
-        <span class="glyphicon glyphicon-ok" aria-hidden="true" ng-click="addSuggestion()"></span>
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
       </div>
     </div>
     <form ng-submit="addIngredient()">
@@ -17,15 +19,23 @@
       </div>
     </form>
     <div class="ingredient-container">
-      <div class="ingredient" ng-repeat="item in kitchen">
+      <div class="ingredient select" ng-repeat="item in kitchen" ng-click="removeIngredient()">
         {{item}}
-        <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeIngredient()"></span>
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
       </div>
     </div>
   </div>
   <div class="col-md-8 recipes">
-    <div class="container">
-      <h3>Recipes</h3>
+    <div class="page-header">
+      <h1>Recipes</h1>
+      <button type="button" class="btn btn-success find-recipes" ng-click="findRecipes()">Find Recipes</button>
+      <div class="recipe-container">
+        <div class="show-recipe well text-center" ng-repeat="recipe in recipes">
+          <h4>{{recipe.title}}</h4>
+          <p>{{recipe.usedIngredientCount}} out of {{recipe.usedIngredientCount + recipe.missedIngredientCount}} ingredients</p>
+          <img class="recipe-image" src="{{recipe.image}}">
+        </div>
+      </div>
     </div>
   </div>
 </div>
