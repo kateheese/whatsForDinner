@@ -1,6 +1,8 @@
 app.controller('KitchenController', ['$scope','$http', '$window', function($scope, $http, $window) {
   $scope.kitchen = [];
   $scope.recipes;
+  $scope.recipeButton = false;
+  $scope.numberOfRecipes = 0;
   $scope.suggestions = [
     'salt',
     'pepper',
@@ -14,7 +16,7 @@ app.controller('KitchenController', ['$scope','$http', '$window', function($scop
     'sugar',
     'flour',
     'vanilla',
-    'corn starch',
+    'baking powder',
     'peanut butter',
     'jelly',
     'ketchup',
@@ -38,10 +40,17 @@ app.controller('KitchenController', ['$scope','$http', '$window', function($scop
   }
 
   $scope.findRecipes = function() {
+    $scope.recipeButton = false;
     var ingredients = $scope.kitchen.map(function(elem) {
       return elem.split(' ').join('+');
     }).join('%2C');
-    $http.get('/recipes/' + ingredients).then(function(result){
+    $scope.loading = $http.get('/recipes/' + ingredients).then(function(result){
+      result.data.body.forEach(function(elem) {
+        if(elem.missedIngredientCount == 0) {
+          $scope.numberOfRecipes++;
+        }
+      })
+      $scope.recipeButton = true;
       $scope.recipes = result.data.body.sort(function(a,b) {
           return a.missedIngredientCount - b.missedIngredientCount;
       })

@@ -39,6 +39,15 @@ a {
   border-radius: 15px;
 }
 
+.ingredient-match {
+  color: white;
+  background-color: #18BC9C;
+}
+
+.inline {
+  display: inline;
+}
+
 .recipes {
   padding-left: 40px;
   padding-right: 40px;

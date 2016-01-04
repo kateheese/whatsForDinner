@@ -3,7 +3,7 @@ var router = express.Router();
 var unirest = require('unirest');
 
 router.get('/recipes/:ingredients', function(req, res) {
-  unirest.get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?ingredients=' + req.params.ingredients + '&number=90')
+  unirest.get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?ingredients=' + req.params.ingredients + '&number=150')
     .header("X-Mashape-Key", process.env.MASHAPE_KEY)
     .header("Accept", "application/json")
     .end(function (results) {
