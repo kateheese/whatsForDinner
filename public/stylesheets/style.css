@@ -6,6 +6,10 @@ a {
   color: #00B7FF;
 }
 
+.error {
+  color: #E74C3C;
+}
+
 .find-recipes {
   padding: 8px;
 }

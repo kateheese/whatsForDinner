@@ -5,7 +5,7 @@
     </div>
     <h4>Suggestions</h4>
     <div class="ingredient-container">
-      <div class="ingredient select" ng-repeat="item in suggestions" ng-click="addSuggestion()">
+      <div class="ingredient select" ng-repeat="item in suggestions | limitTo: 15 " ng-click="addSuggestion()">
         {{item}}
         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
       </div>
@@ -14,13 +14,13 @@
       <div class="input-group">
         <input type="text" class="form-control" placeholder="add ingredient" ng-model="ingredient">
         <span class="input-group-btn">
-          <button class="btn btn-default" type="button">Add</button>
+          <button class="btn btn-default" type="submit">Add</button>
         </span>
       </div>
     </form>
-    <h3>My Kitchen</h3>
+    <h3>My Kitchen <small ng-hide="kitchen.length == 0">({{kitchen.length}})</small></h3>
     <div class="ingredient-container">
-      <div class="ingredient select" ng-repeat="item in kitchen" ng-click="removeIngredient()">
+      <div class="ingredient select" ng-repeat="item in kitchen | orderBy:'toString()'" ng-click="removeIngredient()">
         {{item}}
         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
       </div>
@@ -35,6 +35,9 @@
         </ng-pluralize>
       </small></h1>
       <button type="button" class="btn btn-primary find-recipes" ng-click="findRecipes()">Find Recipes</button>
+      <div ng-show="error" class="text-center error">
+        <h2>You haven't added any food to your kitchen yet!</h2>
+      </div>
       <div class="recipe-container" cg-busy="loading">
         <div class="show-recipe well text-center" ng-repeat="recipe in recipes" ng-click="goToRecipe()" ng-class="{'ingredient-match': recipe.missedIngredientCount == 0}">
           <h4>{{recipe.title}}</h4>
