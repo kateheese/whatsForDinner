@@ -1,3 +1,21 @@
+app.controller('UserController', function($scope, $auth, Account) {
+  $scope.isAuthenticated = function() {
+    return $auth.isAuthenticated();
+  };
+
+  $scope.getProfile = function() {
+    Account.getProfile()
+      .then(function(response) {
+        $scope.user = response.data;
+        console.log($scope.user)
+      })
+      .catch(function(response) {
+      });
+  };
+
+  $scope.getProfile();
+})
+
 app.controller('LoginController', function($scope, $location, $auth) {
   $scope.login = function() {
     $auth.login($scope.user)
@@ -27,24 +45,6 @@ app.controller('LogoutController', function($location, $auth) {
     });
 });
 
-app.controller('NavbarController', function($scope, $auth, Account) {
-  $scope.isAuthenticated = function() {
-    return $auth.isAuthenticated();
-  };
-
-  $scope.getProfile = function() {
-      Account.getProfile()
-        .then(function(response) {
-          console.log(response.data)
-        })
-        .catch(function(response) {
-          console.log(response)
-        });
-    };
-
-    $scope.getProfile();
-});
-
 app.controller('CreateController', function($scope, $location, $auth) {
   $scope.create = function() {
     $auth.signup($scope.user)
@@ -60,6 +60,7 @@ app.controller('CreateController', function($scope, $location, $auth) {
 
 app.controller('KitchenController', ['$scope','$http', '$window', 'Account', function($scope, $http, $window, Account) {
   $scope.kitchen = [];
+  $scope.myRecipes = [];
   $scope.recipes;
   $scope.recipeButton = false;
   $scope.numberOfRecipes = 0;
@@ -99,54 +100,108 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
     'spinach'
   ];
 
-  Account.getProfile()
-    .then(function(response) {
-      response.data.kitchen.forEach(function(food) {
-        $scope.kitchen.push(food);
+  if($scope.user) {
+    Account.getProfile()
+      .then(function(response) {
+        response.data.kitchen.forEach(function(food) {
+          $scope.kitchen.push(food);
+          var index = $scope.suggestions.indexOf(food);
+          $scope.suggestions.splice(index, 1);
+        })
+        response.data.recipes.forEach(function(recipe) {
+          $scope.myRecipes.push(recipe);
+        })
       })
-    })
-    .catch(function(response) {
-      console.log(response)
-    });
+      .catch(function(response) {
+        console.log(response)
+      });
+  }
 
   $scope.addSuggestion = function() {
     $scope.kitchen.push(this.item);
     var index = $scope.suggestions.indexOf(this.item);
     $scope.suggestions.splice(index, 1);
-    console.log(this.item)
-    Account.addFood({food: this.item})
-      .then(function(response) {
-        console.log(response)
-      })
-      .catch(function(response) {
-        console.log(response)
-      });
+    if($scope.user) {
+      Account.addFood({food: this.item})
+        .then(function(response) {
+          console.log(response)
+        })
+        .catch(function(response) {
+          console.log(response)
+        });
+    }
   }
 
   $scope.addIngredient = function() {
-    $scope.kitchen.push($scope.ingredient);
-    console.log($scope.ingredient)
-    $scope.ingredient = '';
-    console.log($scope.ingredient)
-    Account.addFood({food: $scope.ingredient})
-      .then(function(response) {
-        console.log(response)
-      })
-      .catch(function(response) {
-        console.log(response)
-      });
+    if($scope.kitchen.indexOf($scope.ingredient) >= 0) {
+      alert('You already have that ingredient in your kitchen');
+      $scope.ingredient = '';
+    } else {
+      $scope.kitchen.push($scope.ingredient);
+      $scope.ingredient = '';
+      if($scope.user) {
+        Account.addFood({food: $scope.ingredient})
+          .then(function(response) {
+            console.log(response)
+          })
+          .catch(function(response) {
+            console.log(response)
+          });
+      }
+    }
   }
 
   $scope.removeIngredient = function() {
     var index = $scope.kitchen.indexOf(this.item);
     $scope.kitchen.splice(index, 1);
-    Account.removeFood({food: this.item})
-      .then(function(response) {
-        console.log(response)
-      })
-      .catch(function(response) {
-        console.log(response)
-      });
+    if($scope.user) {
+      Account.removeFood({food: this.item})
+        .then(function(response) {
+          console.log(response)
+        })
+        .catch(function(response) {
+          console.log(response)
+        });
+    }
+  }
+
+  $scope.saveRecipe = function() {
+    for(var i = 0; i < $scope.myRecipes.length; i++) {
+      if($scope.myRecipes[i].id == this.recipe.id) {
+        alert('You have already saved this recipe');
+      } else {
+        $scope.myRecipes.push(this.recipe);
+        $scope.ingredient = '';
+        if($scope.user) {
+          Account.saveRecipe(this.recipe)
+            .then(function(response) {
+              console.log(response)
+            })
+            .catch(function(response) {
+              console.log(response)
+            });
+        }
+      }
+    }
+  }
+
+  $scope.removeRecipe = function() {
+    var index;
+    for(var i = 0; i < $scope.myRecipes.length; i++) {
+      if($scope.myRecipes[i].id == this.recipe.id) {
+        index = i;
+      }
+    }
+    $scope.myRecipes.splice(index, 1);
+    if($scope.user) {
+      Account.removeRecipe(this.recipe)
+        .then(function(response) {
+          console.log(response)
+        })
+        .catch(function(response) {
+          console.log(response)
+        });
+    }
   }
 
   $scope.findRecipes = function() {

@@ -11,6 +11,7 @@ var jwt = require('jwt-simple');
 var moment = require('moment');
 var mongoose = require('mongoose');
 var request = require('request');
+var unirest = require('unirest');
 require('dotenv').load();
 
 var userSchema = new mongoose.Schema({
@@ -19,7 +20,15 @@ var userSchema = new mongoose.Schema({
   displayName: String,
   facebook: String,
   google: String,
-  kitchen: [String]
+  kitchen: [String],
+  recipes: [{
+    id: Number,
+    title: String,
+    image: String,
+    usedIngredientCount: Number,
+    missedIngredientCount: Number,
+    likes: Number
+  }]
 });
 
 userSchema.pre('save', function(next) {
@@ -35,18 +44,9 @@ userSchema.pre('save', function(next) {
   });
 });
 
-userSchema.methods.comparePassword = function(password, done) {
-  bcrypt.compare(password, this.password, function(err, isMatch) {
-    done(err, isMatch);
-  });
-};
-
 var User = mongoose.model('User', userSchema);
 
 mongoose.connect(process.env.MONGO_URI);
-mongoose.connection.on('error', function(err) {
-  console.log('Error: Could not connect to MongoDB. Did you forget to run `mongod`?'.red);
-});
 
 var app = express();
 
@@ -64,11 +64,7 @@ if (app.get('env') === 'production') {
 app.use(express.static(path.join(__dirname, 'public')));
 
 function ensureAuthenticated(req, res, next) {
-  if (!req.headers.authorization) {
-    return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
-  }
   var token = req.headers.authorization.split(' ')[1];
-
   var payload = null;
   try {
     payload = jwt.decode(token, process.env.TOKEN_SECRET);
@@ -76,7 +72,6 @@ function ensureAuthenticated(req, res, next) {
   catch (err) {
     return res.status(401).send({ message: err.message });
   }
-
   if (payload.exp <= moment().unix()) {
     return res.status(401).send({ message: 'Token has expired' });
   }
@@ -92,6 +87,24 @@ function createJWT(user) {
   };
   return jwt.encode(payload, process.env.TOKEN_SECRET);
 }
+
+app.get('/recipes/:ingredients', function(req, res) {
+  unirest.get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?ingredients=' + req.params.ingredients + '&number=150')
+    .header("X-Mashape-Key", process.env.MASHAPE_KEY)
+    .header("Accept", "application/json")
+    .end(function (results) {
+      res.json(results).status(200).end();
+    });
+});
+
+app.get('/recipe/:id', function(req, res) {
+  unirest.get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/' + req.params.id + '/information')
+  .header("X-Mashape-Key", process.env.MASHAPE_KEY)
+  .header("Accept", "application/json")
+  .end(function (results) {
+    res.json(results).status(200).end();
+  });
+})
 
 app.get('/api/me', ensureAuthenticated, function(req, res) {
   User.findById(req.user, function(err, user) {
@@ -112,7 +125,7 @@ app.put('/api/me', ensureAuthenticated, function(req, res) {
   });
 });
 
-app.post('/api/me/add', ensureAuthenticated, function(req, res) {
+app.post('/api/me/add-food', ensureAuthenticated, function(req, res) {
   console.log(req)
   User.findById(req.user, function(err, user) {
     if (!user) {
@@ -125,13 +138,43 @@ app.post('/api/me/add', ensureAuthenticated, function(req, res) {
   })
 });
 
-app.post('/api/me/remove', ensureAuthenticated, function(req, res) {
+app.post('/api/me/remove-food', ensureAuthenticated, function(req, res) {
   User.findById(req.user, function(err, user) {
     if (!user) {
       return res.status(400).send({ message: 'User not found' });
     }
     var index = user.kitchen.indexOf(req.body.food);
     user.kitchen.splice(index, 1);
+    user.save(function(err) {
+      res.status(200).end();
+    })
+  })
+});
+
+app.post('/api/me/save-recipe', ensureAuthenticated, function(req, res) {
+  User.findById(req.user, function(err, user) {
+    if (!user) {
+      return res.status(400).send({ message: 'User not found' });
+    }
+    user.recipes.push(req.body);
+    user.save(function(err) {
+      res.status(200).end();
+    })
+  })
+});
+
+app.post('/api/me/remove-recipe', ensureAuthenticated, function(req, res) {
+  User.findById(req.user, function(err, user) {
+    if (!user) {
+      return res.status(400).send({ message: 'User not found' });
+    }
+    var index;
+    for(var i = 0; i < user.recipes.length; i++) {
+      if(user.recipes[i].id == req.body.id) {
+        index = i;
+      }
+    }
+    user.recipes.splice(index, 1);
     user.save(function(err) {
       res.status(200).end();
     })
@@ -291,8 +334,7 @@ app.post('/auth/facebook', function(req, res) {
 
 app.post('/auth/unlink', ensureAuthenticated, function(req, res) {
   var provider = req.body.provider;
-  var providers = ['facebook', 'foursquare', 'google', 'github', 'instagram',
-    'linkedin', 'live', 'twitter', 'twitch', 'yahoo'];
+  var providers = ['facebook', 'google'];
 
   if (providers.indexOf(provider) === -1) {
     return res.status(400).send({ message: 'Unknown OAuth Provider' });

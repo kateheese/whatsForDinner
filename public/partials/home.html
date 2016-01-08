@@ -25,6 +25,24 @@
         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
       </div>
     </div>
+    <div ng-show="user" ng-hide="myRecipes.length == 0">
+      <h3>My Recipes <small ng-hide="myRecipes.length == 0">({{myRecipes.length}})</small></h3>
+      <div class="my-recipe-container">
+        <div class="my-recipe" ng-repeat="recipe in myRecipes | orderBy:'recipe.title'">
+          <div class="flex-container">
+            <div class="flex-image">
+              <img class="my-recipe-image select" src="{{recipe.image}}" ng-click="goToRecipe()">
+            </div>
+            <div class="flex-title">
+              <h4 class="select" ng-click="goToRecipe()">{{recipe.title}}</h4>
+            </div>
+            <div class="col-md-2 text-center flex-remove">
+              <span class="glyphicon glyphicon-remove select" aria-hidden="true" ng-click="removeRecipe()"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="col-md-8 recipes">
     <div class="page-header">
@@ -39,7 +57,7 @@
         <h2>You haven't added any food to your kitchen yet!</h2>
       </div>
       <div class="recipe-container" cg-busy="loading">
-        <div class="show-recipe well text-center" ng-repeat="recipe in recipes" ng-click="goToRecipe()" ng-class="{'ingredient-match': recipe.missedIngredientCount == 0}">
+        <div class="show-recipe well text-center" ng-repeat="recipe in recipes" ng-class="{'ingredient-match': recipe.missedIngredientCount == 0}">
           <h4>{{recipe.title}}</h4>
           <p>
             <div class="inline" ng-show="recipe.missedIngredientCount == 0">
@@ -47,7 +65,8 @@
             </div> 
             {{recipe.usedIngredientCount}} out of {{recipe.usedIngredientCount + recipe.missedIngredientCount}} ingredients
           </p>
-          <img class="recipe-image" src="{{recipe.image}}">
+          <img class="recipe-image select" src="{{recipe.image}}" ng-click="goToRecipe()">
+          <button class="save-recipe btn btn-default" ng-click="saveRecipe()">Save Recipe</button>
         </div>
       </div>
     </div>
