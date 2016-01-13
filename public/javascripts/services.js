@@ -20,3 +20,7 @@ app.factory('Account', function($http) {
     }
   };
 });
+
+app.factory('underscore', function() {
+  return window._;
+});

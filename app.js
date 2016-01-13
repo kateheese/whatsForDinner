@@ -89,7 +89,7 @@ function createJWT(user) {
 }
 
 app.get('/recipes/:ingredients', function(req, res) {
-  unirest.get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?ingredients=' + req.params.ingredients + '&number=150')
+  unirest.get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?ingredients=' + req.params.ingredients + '&number=60')
     .header("X-Mashape-Key", process.env.MASHAPE_KEY)
     .header("Accept", "application/json")
     .end(function (results) {
@@ -349,6 +349,12 @@ app.post('/auth/unlink', ensureAuthenticated, function(req, res) {
       res.status(200).end();
     });
   });
+});
+
+app.get('*', function(req, res) {
+  res.sendFile('index.html', {
+    root: __dirname + '/public'
+  })
 });
 
 module.exports = app;

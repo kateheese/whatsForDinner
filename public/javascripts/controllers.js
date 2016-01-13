@@ -1,70 +1,51 @@
-app.controller('UserController', function($scope, $auth, Account) {
+app.controller('UserController', ['$scope', '$auth', 'Account', function($scope, $auth, Account) {
   $scope.isAuthenticated = function() {
     return $auth.isAuthenticated();
   };
 
-  $scope.getProfile = function() {
-    Account.getProfile()
-      .then(function(response) {
-        $scope.user = response.data;
-        console.log($scope.user)
-      })
-      .catch(function(response) {
-      });
-  };
+  Account.getProfile().then(function(response) {
+    $scope.user = response.data;
+  });
+}]);
 
-  $scope.getProfile();
-})
-
-app.controller('LoginController', function($scope, $location, $auth) {
+app.controller('LoginController', ['$scope', '$location', '$auth', function($scope, $location, $auth) {
   $scope.login = function() {
-    $auth.login($scope.user)
-      .then(function() {
-        $location.path('/');
-      })
-      .catch(function(error) {
-        console.log(error)
-      });
-  };
-  $scope.authenticate = function(provider) {
-    $auth.authenticate(provider)
-      .then(function() {
-        $location.path('/');
-      })
-      .catch(function(error) {
-        console.log(error)
-      });
-  };
-});
-
-app.controller('LogoutController', function($location, $auth) {
-  if (!$auth.isAuthenticated()) { return; }
-  $auth.logout()
-    .then(function() {
+    $auth.login($scope.user).then(function() {
       $location.path('/');
     });
-});
-
-app.controller('CreateController', function($scope, $location, $auth) {
-  $scope.create = function() {
-    $auth.signup($scope.user)
-      .then(function(response) {
-        $auth.setToken(response);
-        $location.path('/');
-      })
-      .catch(function(response) {
-        console.log(response)
-      });
   };
-});
+  $scope.authenticate = function(provider) {
+    $auth.authenticate(provider).then(function() {
+      $location.path('/');
+    });
+  };
+}]);
 
-app.controller('KitchenController', ['$scope','$http', '$window', 'Account', function($scope, $http, $window, Account) {
+app.controller('LogoutController', ['$location', '$auth', function($location, $auth) {
+  if (!$auth.isAuthenticated()) { return; }
+  $auth.logout().then(function() {
+    $location.path('/');
+  });
+}]);
+
+app.controller('CreateController', ['$scope', '$location', '$auth', function($scope, $location, $auth) {
+  $scope.create = function() {
+    $auth.signup($scope.user).then(function(response) {
+      $auth.setToken(response);
+      $location.path('/');
+    });
+  };
+}]);
+
+app.controller('KitchenController', ['$scope','$http', '$window', 'Account', '$rootScope', function($scope, $http, $window, Account, $rootScope) {
   $scope.kitchen = [];
   $scope.myRecipes = [];
   $scope.recipes;
+  $scope.items = [];
   $scope.recipeButton = false;
   $scope.numberOfRecipes = 0;
   $scope.error = false;
+  $scope.popoverTemplate = "/partials/popover.html";
   $scope.suggestions = [
     'salt',
     'pepper',
@@ -78,7 +59,6 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
     'milk',
     'vegetable oil',
     'potatoes',
-    'yeast',
     'rice',
     'pasta',
     'butter',
@@ -101,20 +81,16 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
   ];
 
   if($scope.user) {
-    Account.getProfile()
-      .then(function(response) {
-        response.data.kitchen.forEach(function(food) {
-          $scope.kitchen.push(food);
-          var index = $scope.suggestions.indexOf(food);
-          $scope.suggestions.splice(index, 1);
-        })
-        response.data.recipes.forEach(function(recipe) {
-          $scope.myRecipes.push(recipe);
-        })
+    Account.getProfile().then(function(response) {
+      response.data.kitchen.forEach(function(food) {
+        $scope.kitchen.push(food);
+        var index = $scope.suggestions.indexOf(food);
+        $scope.suggestions.splice(index, 1);
       })
-      .catch(function(response) {
-        console.log(response)
-      });
+      response.data.recipes.forEach(function(recipe) {
+        $scope.myRecipes.push(recipe);
+      })
+    })
   }
 
   $scope.addSuggestion = function() {
@@ -122,13 +98,7 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
     var index = $scope.suggestions.indexOf(this.item);
     $scope.suggestions.splice(index, 1);
     if($scope.user) {
-      Account.addFood({food: this.item})
-        .then(function(response) {
-          console.log(response)
-        })
-        .catch(function(response) {
-          console.log(response)
-        });
+      Account.addFood({food: this.item});
     }
   }
 
@@ -140,13 +110,7 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
       $scope.kitchen.push($scope.ingredient);
       $scope.ingredient = '';
       if($scope.user) {
-        Account.addFood({food: $scope.ingredient})
-          .then(function(response) {
-            console.log(response)
-          })
-          .catch(function(response) {
-            console.log(response)
-          });
+        Account.addFood({food: $scope.ingredient});
       }
     }
   }
@@ -155,33 +119,15 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
     var index = $scope.kitchen.indexOf(this.item);
     $scope.kitchen.splice(index, 1);
     if($scope.user) {
-      Account.removeFood({food: this.item})
-        .then(function(response) {
-          console.log(response)
-        })
-        .catch(function(response) {
-          console.log(response)
-        });
+      Account.removeFood({food: this.item});
     }
   }
 
   $scope.saveRecipe = function() {
-    for(var i = 0; i < $scope.myRecipes.length; i++) {
-      if($scope.myRecipes[i].id == this.recipe.id) {
-        alert('You have already saved this recipe');
-      } else {
-        $scope.myRecipes.push(this.recipe);
-        $scope.ingredient = '';
-        if($scope.user) {
-          Account.saveRecipe(this.recipe)
-            .then(function(response) {
-              console.log(response)
-            })
-            .catch(function(response) {
-              console.log(response)
-            });
-        }
-      }
+    $scope.myRecipes.push(this.recipe);
+    $scope.ingredient = '';
+    if($scope.user) {
+      Account.saveRecipe(this.recipe);
     }
   }
 
@@ -194,13 +140,7 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
     }
     $scope.myRecipes.splice(index, 1);
     if($scope.user) {
-      Account.removeRecipe(this.recipe)
-        .then(function(response) {
-          console.log(response)
-        })
-        .catch(function(response) {
-          console.log(response)
-        });
+      Account.removeRecipe(this.recipe);
     }
   }
 
@@ -233,4 +173,31 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', fun
       $window.open(result.data.body.sourceUrl, '_blank');
     })
   }
-}])
+
+  $scope.missingIngredients = function() {
+    $rootScope.missing = [];
+    var common = [];
+    var diff = [];
+    var ingredients = [];
+    $http.get('/recipe/' + this.recipe.id).then(function(result) {
+      var obj = result.data.body.extendedIngredients;
+      for(var i = 0; i < obj.length; i++) {
+        ingredients.push(obj[i].name);
+      }
+      for(var i = 0; i < $scope.kitchen.length; i++) {
+        for(var j = 0; j < ingredients.length; j++) {
+          if(_(ingredients[j]).pluralize(1).indexOf(_($scope.kitchen[i]).pluralize(1)) >= 0) {
+            common.push(j);
+          }
+        }
+      }
+      for(var i = 0; i < ingredients.length; i++) {
+        if(common.indexOf(i) < 0) {
+          diff.push(ingredients[i]);
+        }
+      }
+      $scope.missing = diff;
+      console.log($scope.missing)
+    })
+  }
+}]);
