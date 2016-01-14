@@ -56,13 +56,13 @@
     </div>
     <div class="recipe-container">
       <div class="row" cg-busy="loading">
-        <div class="col-sm-6 col-md-4" ng-repeat="recipe in recipes">
+        <div class="col-sm-6 col-md-4 recipe-div" ng-repeat="recipe in recipes">
           <div class="thumbnail">
             <div class="recipe-image">
               <img src="{{recipe.image}}" ng-click="goToRecipe()" class="select">
             </div>
             <div class="caption">
-              <h3 ng-click="goToRecipe()" class="title-link">{{recipe.title}}</h3>
+              <h4 ng-click="goToRecipe()" class="title-link">{{recipe.title}}</h4>
               <div class="inline" ng-show="recipe.missedIngredientCount == 0">
                   <span class="glyphicon glyphicon-ok ingredient-match" aria-hidden="true"></span>
               </div> 
