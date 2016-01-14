@@ -266,8 +266,6 @@ angular.module('cgBusy').run(['$templateCache', function($templateCache) {
     "         <div class=\"bar12\"></div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"cg-busy-default-text\">{{$message}}</div>\n" +
-    "\n" +
     "   </div>\n" +
     "\n" +
     "</div>"

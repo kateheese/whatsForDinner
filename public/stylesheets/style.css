@@ -1,13 +1,39 @@
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 16px 'Raleway', sans-serif;;
 }
 
 a {
   color: #00B7FF;
 }
 
+.about {
+  margin-top: 50px;
+}
+
+.about-col {
+  margin-bottom: 30px;
+}
+
+.about-header {
+  margin-top: -22px;
+  height: 25vh;
+  background-image: url('/images/about-background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+}
+
+.about-icon {
+  height: 150px;
+}
+
 .error {
   color: #E74C3C;
+  margin: 30px 50px 0 50px;
+}
+
+.fa-exclamation-circle:hover {
+  color: #2C3E50;
 }
 
 .find-recipes {
@@ -47,7 +73,7 @@ a {
   height: 88vh;
   overflow: scroll;
   background-color: #ECF0F1;
-  border-right: 1px solid #BDBDBD;
+  border-right: 1px solid #C0C0C0;
 }
 
 .modal {
@@ -55,8 +81,8 @@ a {
 }
 
 .my-recipe {
-  background-color: #3D3D31;
-  color: white;
+  background-color: #383838;
+  color: #EDEDED;
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -72,8 +98,13 @@ a {
 
 .navbar {
   border-radius: 0;
-  height: 90px;
-  background-color: #3D3D31;
+  height: 100%;
+  background-color: #383838;
+  padding: 20px 0;
+}
+
+.navbar .navbar-nav li a {
+  font-size: 16px;
 }
 
 .navbar .navbar-brand {
@@ -83,21 +114,27 @@ a {
 }
 
 .navbar .navbar-brand:hover, .navbar .navbar-brand:active, .navbar .navbar-brand:focus {
-  color: #E7877F;
+  color: #D1D1D1;
+}
+
+.page-header {
+  margin: -10px -15px;
+  padding: 10px 0 20px 30px;
+  background-color: #ECF0F1;
+  border-bottom: 1px solid #C0C0C0;
 }
 
 .ingredient {
   padding: 8px 10px;
-  color: white;
-  background-color: #94A4A5;
+  color: #EDEDED;
+  background-color: #95675F;
   display: inline-block;
   margin: 5px;
   border-radius: 15px;
 }
 
 .ingredient-match {
-  color: white;
-  background-color: #73A188;
+  color: #43AC6A;
 }
 
 .inline {
@@ -105,10 +142,18 @@ a {
 }
 
 .recipes {
-  padding-left: 40px;
-  padding-right: 40px;
   height: 88vh;
   overflow: scroll;
+  background-color: #948980;
+}
+
+.recipes-background {
+  background-image: url('/images/recipe-background.jpg');
+  background-size: cover;
+}
+
+.recipe-container {
+  padding: 30px 30px 0 30px;
 }
 
 .recipe-image {
@@ -126,6 +171,7 @@ a {
 
 .save-recipe {
   margin-top: 15px;
+  float: center;
 }
 
 .show-recipe {
@@ -136,4 +182,20 @@ a {
 
 .select:hover {
   cursor: pointer;
+  opacity: 0.8;
+}
+
+.title-link:hover {
+  cursor: pointer;
+  color: #95675F;
+}
+
+h3 small {
+  color: #787878;
+}
+
+@media (max-width: 480px){
+  .navbar .navbar-brand {
+    font-size: 28px;
+  }
 }

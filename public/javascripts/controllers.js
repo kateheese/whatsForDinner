@@ -12,6 +12,7 @@ app.controller('LoginController', ['$scope', '$location', '$auth', function($sco
   $scope.login = function() {
     $auth.login($scope.user).then(function() {
       $location.path('/');
+      $scope.user = {};
     });
   };
   $scope.authenticate = function(provider) {
@@ -21,10 +22,11 @@ app.controller('LoginController', ['$scope', '$location', '$auth', function($sco
   };
 }]);
 
-app.controller('LogoutController', ['$location', '$auth', function($location, $auth) {
+app.controller('LogoutController', ['$location', '$auth', '$scope', function($location, $auth, $scope) {
   if (!$auth.isAuthenticated()) { return; }
   $auth.logout().then(function() {
     $location.path('/');
+    $scope.user = {};
   });
 }]);
 
@@ -34,6 +36,7 @@ app.controller('CreateController', ['$scope', '$location', '$auth', function($sc
       $auth.setToken(response);
       $location.path('/');
     });
+    $scope.user = {};
   };
 }]);
 

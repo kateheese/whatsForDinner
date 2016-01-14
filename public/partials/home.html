@@ -11,7 +11,7 @@
       <div class="input-group">
         <input type="text" class="form-control" placeholder="add ingredient" ng-model="ingredient">
         <span class="input-group-btn">
-          <button class="btn btn-default" type="submit">Add</button>
+          <button class="btn btn-info" type="submit">Add</button>
         </span>
       </div>
     </form>
@@ -41,7 +41,7 @@
       </div>
     </div>
   </div>
-  <div class="col-md-8 recipes">
+  <div class="col-md-8 recipes" ng-class="{'recipes-background': !recipes}">
     <div class="page-header">
       <h1>Recipes <small ng-show="recipeButton">
         <ng-pluralize count="numberOfRecipes"
@@ -49,24 +49,24 @@
                         'other': 'You can make {} recipes'}">
         </ng-pluralize>
       </small></h1>
-      <button type="button" class="btn btn-primary find-recipes" ng-click="findRecipes()">Find Recipes</button>
+      <button type="button" class="btn btn-info find-recipes" ng-click="findRecipes()">Find Recipes</button>
     </div>
-    <div ng-show="error" class="text-center error">
+    <div ng-show="error" class="text-center error well">
       <h2>You haven't added any food to your kitchen yet!</h2>
     </div>
-    <div class="recipe-container" cg-busy="loading">
-      <div class="row">
+    <div class="recipe-container">
+      <div class="row" cg-busy="loading">
         <div class="col-sm-6 col-md-4" ng-repeat="recipe in recipes">
-          <div class="thumbnail" ng-class="{'ingredient-match': recipe.missedIngredientCount == 0}">
+          <div class="thumbnail">
             <div class="recipe-image">
-              <img src="{{recipe.image}}" ng-click="goToRecipe()">
+              <img src="{{recipe.image}}" ng-click="goToRecipe()" class="select">
             </div>
             <div class="caption">
               <h3 ng-click="goToRecipe()" class="title-link">{{recipe.title}}</h3>
               <div class="inline" ng-show="recipe.missedIngredientCount == 0">
-                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  <span class="glyphicon glyphicon-ok ingredient-match" aria-hidden="true"></span>
               </div> 
-              {{recipe.usedIngredientCount}} out of {{recipe.usedIngredientCount + recipe.missedIngredientCount}} ingredients <span class='btn' ng-show="recipe.missedIngredientCount > 0" uib-popover-template="popoverTemplate" popover-title="Missing Ingredients" popover-placement="bottom-right" ng-click="missingIngredients()"><span class="fa fa-exclamation-circle fa-lg"></span></span>
+              {{recipe.usedIngredientCount}} out of {{recipe.usedIngredientCount + recipe.missedIngredientCount}} ingredients <span class="btn" ng-show="recipe.missedIngredientCount > 0" uib-popover-template="popoverTemplate" popover-title="Missing Ingredients" popover-placement="bottom-right" popover-trigger="outsideClick" ng-click="missingIngredients()"><span class="fa fa-exclamation-circle fa-lg"></span></span>
               <button class="save-recipe btn btn-default" ng-click="saveRecipe()">Save Recipe</button>
             </div>
           </div>
