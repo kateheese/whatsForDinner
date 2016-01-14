@@ -11,32 +11,35 @@ app.controller('UserController', ['$scope', '$auth', 'Account', function($scope,
 app.controller('LoginController', ['$scope', '$location', '$auth', function($scope, $location, $auth) {
   $scope.login = function() {
     $auth.login($scope.user).then(function() {
-      $location.path('/');
       $scope.user = {};
-    });
+      $location.path('/');
+    })
   };
   $scope.authenticate = function(provider) {
     $auth.authenticate(provider).then(function() {
       $location.path('/');
-    });
+    })
   };
 }]);
 
 app.controller('LogoutController', ['$location', '$auth', '$scope', function($location, $auth, $scope) {
   if (!$auth.isAuthenticated()) { return; }
   $auth.logout().then(function() {
-    $location.path('/');
     $scope.user = {};
-  });
+    $location.path('/');
+  })
 }]);
 
 app.controller('CreateController', ['$scope', '$location', '$auth', function($scope, $location, $auth) {
   $scope.create = function() {
     $auth.signup($scope.user).then(function(response) {
       $auth.setToken(response);
+      $scope.user = {};
       $location.path('/');
+    })
+    .catch(function(error) {
+      console.log(error)
     });
-    $scope.user = {};
   };
 }]);
 
@@ -52,9 +55,14 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', '$r
   $scope.suggestions = [
     'salt',
     'pepper',
+    'baking soda',
+    'honey',
+    'rosemary',
+    'cornmeal',
     'garlic',
     'olive oil',
     'bread',
+    'cinnamon',
     'water',
     'bacon',
     'eggs',
