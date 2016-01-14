@@ -2,6 +2,14 @@ app.controller('UserController', ['$scope', '$auth', 'Account', function($scope,
   $scope.isAuthenticated = function() {
     return $auth.isAuthenticated();
   };
+
+  $scope.getUser = function() {
+    Account.getProfile().then(function(response) {
+      $scope.user = response.data;
+    });
+  }
+
+  $scope.getUser();
 }]);
 
 app.controller('LoginController', ['$scope', '$location', '$auth', function($scope, $location, $auth) {
@@ -51,31 +59,31 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', '$r
   $scope.suggestions = [
     'salt',
     'pepper',
-    'butter',
-    'sugar',
-    'eggs',
     'baking soda',
     'honey',
-    'vanilla',
-    'baking powder',
-    'cinnamon',
-    'flour',
-    'corn meal',
     'rosemary',
+    'cornmeal',
     'garlic',
     'olive oil',
     'bread',
+    'cinnamon',
     'water',
     'bacon',
+    'eggs',
     'carrots',
     'milk',
     'vegetable oil',
     'potatoes',
     'rice',
     'pasta',
+    'butter',
+    'sugar',
+    'flour',
     'canned tuna',
     'banana',
     'peas',
+    'vanilla',
+    'baking powder',
     'peanut butter',
     'jelly',
     'tomato',
