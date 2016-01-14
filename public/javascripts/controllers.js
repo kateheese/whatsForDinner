@@ -3,9 +3,13 @@ app.controller('UserController', ['$scope', '$auth', 'Account', function($scope,
     return $auth.isAuthenticated();
   };
 
-  Account.getProfile().then(function(response) {
-    $scope.user = response.data;
-  });
+  $scope.getUser = function() {
+    Account.getProfile().then(function(response) {
+      $scope.user = response.data;
+    });
+  }
+
+  $scope.getUser();
 }]);
 
 app.controller('LoginController', ['$scope', '$location', '$auth', function($scope, $location, $auth) {
