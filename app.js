@@ -46,7 +46,7 @@ userSchema.pre('save', function(next) {
 
 var User = mongoose.model('User', userSchema);
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGOLAB_URI);
 
 var app = express();
 
