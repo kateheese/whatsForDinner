@@ -55,8 +55,8 @@
       <h2>You haven't added any food to your kitchen yet!</h2>
     </div>
     <div class="recipe-container">
-      <div class="row" cg-busy="loading">
-        <div class="col-sm-6 col-md-4 recipe-div" ng-repeat="recipe in recipes">
+      <div class="row dynamic-grid" cg-busy="loading" angular-grid="recipes" grid-width="250" gutter-size="10">
+        <div class="grid col-sm-6 col-md-4 recipe-div" data-ng-repeat="recipe in recipes">
           <div class="thumbnail">
             <div class="recipe-image">
               <img src="{{recipe.image}}" ng-click="goToRecipe()" class="select">
@@ -66,7 +66,7 @@
               <div class="inline" ng-show="recipe.missedIngredientCount == 0">
                   <span class="glyphicon glyphicon-ok ingredient-match" aria-hidden="true"></span>
               </div> 
-              {{recipe.usedIngredientCount}} out of {{recipe.usedIngredientCount + recipe.missedIngredientCount}} ingredients <span class="btn" ng-show="recipe.missedIngredientCount > 0" uib-popover-template="popoverTemplate" popover-title="Missing Ingredients" popover-placement="bottom-right" popover-trigger="outsideClick" ng-click="missingIngredients()"><span class="fa fa-exclamation-circle fa-lg"></span></span>
+              {{recipe.usedIngredientCount}} out of {{recipe.usedIngredientCount + recipe.missedIngredientCount}} ingredients <span class="btn" ng-show="recipe.missedIngredientCount != 0" uib-popover-template="popoverTemplate" popover-title="Missing Ingredients" popover-placement="bottom-right" popover-trigger="outsideClick" ng-click="missingIngredients()"><span class="fa fa-exclamation-circle fa-lg"></span></span>
               <button class="save-recipe btn btn-default" ng-click="saveRecipe()">Save Recipe</button>
             </div>
           </div>

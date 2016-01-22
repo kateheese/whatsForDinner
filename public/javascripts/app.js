@@ -1,4 +1,4 @@
-var app = angular.module('whatsForDinner', ['ngRoute', 'ngMessages', 'cgBusy', 'satellizer', 'ui.bootstrap'])
+var app = angular.module('whatsForDinner', ['ngRoute', 'ngMessages', 'cgBusy', 'satellizer', 'ui.bootstrap', 'angularGrid'])
   .config(function($routeProvider, $locationProvider, $authProvider) {
     $routeProvider
       .when('/', {

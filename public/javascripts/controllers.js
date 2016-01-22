@@ -177,8 +177,9 @@ app.controller('KitchenController', ['$scope','$http', '$window', 'Account', '$r
         })
         $scope.recipeButton = true;
         $scope.recipes = result.data.body.sort(function(a,b) {
-            return a.missedIngredientCount - b.missedIngredientCount;
+            return Math.abs(a.missedIngredientCount) - Math.abs(b.missedIngredientCount);
         })
+        console.log($scope.recipes)
       });
     }
   }
